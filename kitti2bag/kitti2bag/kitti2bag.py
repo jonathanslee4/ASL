@@ -9,6 +9,7 @@ except ImportError as e:
     print('Could not load module \'pykitti\'. Please run `pip install pykitti`')
     sys.exit(1)
 
+import pickle
 import tf
 import os
 import cv2
@@ -151,7 +152,10 @@ def save_camera_data(bag, kitti_type, kitti, util, bridge, camera, camera_frame_
         calib.header.stamp = image_message.header.stamp
         bag.write(topic + topic_ext, image_message, t = image_message.header.stamp)
         bag.write(topic + '/camera_info', calib, t = calib.header.stamp) 
-        
+
+
+count = 0
+
 def save_velo_data(bag, kitti, velo_frame_id, topic):
     print("Exporting velodyne data")
     velo_path = os.path.join(kitti.data_path, 'velodyne_points')
@@ -191,6 +195,14 @@ def save_velo_data(bag, kitti, velo_frame_id, topic):
 
         bag.write(topic + '/pointcloud', pcl_msg, t=pcl_msg.header.stamp)
 
+        #NEW CODE
+        if count == 0:
+            filename = "pickled_scan"
+            outfile = open(filename,'wb')
+            pickle.dump(pcl_msg,outfile)
+            outfile.close()
+            count += 1
+        
 
 def get_static_transform(from_frame_id, to_frame_id, transform):
     t = transform[0:3, 3]
