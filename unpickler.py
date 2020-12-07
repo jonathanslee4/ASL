@@ -9,6 +9,6 @@ velo_id = "000000"
 
 pcl_msg = pickle.load(open(velo_id + ".p", "rb"))
 
-print pcl_msg.header
+# print(pcl_msg.header)
 
         
